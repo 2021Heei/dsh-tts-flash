@@ -1,5 +1,7 @@
 # dsh-tts-flash
 
+https://github.com/2021Heei/dsh-tts-flash/raw/main/demo.mp4
+
 给 DeepSeek Harness（DSH）桌面端做的 **LLM 回复语音朗读插件**：AI 边流式输出，本地边把句子合成语音播放，随读随停；AI 思考等待期间还有"文字+语音"双通道的趣味短语反馈。
 
 - **零配置可用**：内置微软 edge-tts，能联网就能用（几十种音色）
