@@ -1,5 +1,5 @@
-# dsh-voice-reader bundle: host TTS engine + client voice bar.
+# dsh-tts-flash bundle: host TTS engine + client voice bar.
 # Applied by `dsh plugin --profile desktop add <this-package>`.
 - insert:
-    - id: voice-reader
-      name: 'dsh-voice-reader'
+    - id: tts-flash
+      name: 'dsh-tts-flash'

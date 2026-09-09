@@ -1,13 +1,13 @@
 /**
- * Runtime settings store for dsh-voice-reader.
+ * Runtime settings store for dsh-tts-flash.
  *
  * Why a plain JSON file instead of the Cordis config tree: the settings panel
  * writes from the browser on every change (toggle, slider drag, dropdown), and
  * DSH 0.1.x exposes no plugin-config write API to a client bundle. The file
  * lives next to the profile data so it survives plugin reinstall / upgrades:
  *
- *   ~/.dsh/voice-reader/settings.json   — user settings
- *   ~/.dsh/voice-reader/engines/*.json  — drop-in engine declarations
+ *   ~/.dsh/tts-flash/settings.json   — user settings
+ *   ~/.dsh/tts-flash/engines/*.json  — drop-in engine declarations
  *
  * Drop-in engines are how "new models appear automatically": drop a file like
  *
@@ -77,7 +77,7 @@ export const DEFAULT_SETTINGS: VoiceSettings = {
   thinkingEngine: '',
 }
 
-export const DATA_DIR = join(homedir(), '.dsh', 'voice-reader')
+export const DATA_DIR = join(homedir(), '.dsh', 'tts-flash')
 export const SETTINGS_FILE = join(DATA_DIR, 'settings.json')
 export const ENGINES_DIR = join(DATA_DIR, 'engines')
 
@@ -139,13 +139,13 @@ export function saveSettings(patch: Partial<VoiceSettings>): VoiceSettings {
     ensureDir(DATA_DIR)
     writeFileSync(SETTINGS_FILE, `${JSON.stringify(next, null, 2)}\n`, 'utf8')
   } catch (e) {
-    console.warn(`[voice-reader] could not persist settings: ${String(e)}`)
+    console.warn(`[tts-flash] could not persist settings: ${String(e)}`)
   }
   return next
 }
 
 /**
- * Read engine declarations dropped into ~/.dsh/voice-reader/engines/*.json.
+ * Read engine declarations dropped into ~/.dsh/tts-flash/engines/*.json.
  * Malformed files are skipped (and reported) instead of breaking startup.
  */
 export function loadEngineDeclarations(): EngineDeclaration[] {
@@ -160,7 +160,7 @@ export function loadEngineDeclarations(): EngineDeclaration[] {
   for (const file of files) {
     const raw = readJson(join(ENGINES_DIR, file)) as Partial<EngineDeclaration> | undefined
     if (!raw || typeof raw.id !== 'string' || typeof raw.url !== 'string') {
-      console.warn(`[voice-reader] ignoring malformed engine file: ${file}`)
+      console.warn(`[tts-flash] ignoring malformed engine file: ${file}`)
       continue
     }
     const rawKind = raw.kind === 'openai' ? 'openai' : 'sidecar'
@@ -200,6 +200,6 @@ export function saveEngineDeclaration(decl: EngineDeclaration): void {
       'utf8',
     )
   } catch (e) {
-    console.warn(`[voice-reader] could not write engine file: ${String(e)}`)
+    console.warn(`[tts-flash] could not write engine file: ${String(e)}`)
   }
 }

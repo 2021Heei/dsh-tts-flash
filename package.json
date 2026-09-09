@@ -1,5 +1,5 @@
 {
-  "name": "dsh-voice-reader",
+  "name": "dsh-tts-flash",
   "description": "DSH voice reader: read LLM replies aloud as they stream. Edge-tts built-in, any OpenAI-compatible cloud TTS plugs in via the settings panel, plus a voiced waiting-phrase ticker while the model thinks.",
   "version": "0.1.0",
   "type": "module",

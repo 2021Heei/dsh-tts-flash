@@ -1,5 +1,5 @@
 /**
- * dsh-voice-reader — host half.
+ * dsh-tts-flash — host half.
  *
  * A generic "read the LLM reply aloud" engine for DeepSeek Harness.
  *
@@ -13,7 +13,7 @@
  * TTS engines are swappable behind the TtsProvider interface (src/provider.ts).
  * Built-in: edge-tts (in-process). Sidecar: ChatTTS / GPT-SoVITS (M2+).
  *
- * HTTP surface (all under config.basePath, default /dsh-voice-reader):
+ * HTTP surface (all under config.basePath, default /dsh-tts-flash):
  *   GET  /stream      SSE audio frames
  *   POST /cancel      { sessionId } → epoch-bump that session
  *   GET  /config      settings + engine list (with availability) + voices
@@ -45,7 +45,7 @@ import {
   type VoiceSettings,
 } from './settings-store.ts'
 
-export const name = 'voice-reader'
+export const name = 'tts-flash'
 export const inject = ['webServer']
 
 export interface Config {
@@ -73,7 +73,7 @@ export interface Config {
 
 export const Config = z.object({
   enabled: z.boolean().default(true),
-  basePath: z.string().default('/dsh-voice-reader'),
+  basePath: z.string().default('/dsh-tts-flash'),
   engine: z.string().default('auto'),
   voice: z.string().default(''),
   rate: z.number().default(0),
@@ -153,7 +153,7 @@ export function apply(ctx: Context, config: Config): void {
       new EdgeTtsProvider({ voice, ratePercent: settings.rate, volumePercent: settings.volume }),
     ]
     // New models appear here without a rebuild: drop a JSON declaration into
-    // ~/.dsh/voice-reader/engines/ and it shows up in the settings dropdown.
+    // ~/.dsh/tts-flash/engines/ and it shows up in the settings dropdown.
     for (const decl of loadEngineDeclarations()) {
       if (list.some((p) => p.id === decl.id)) continue
       if (decl.kind === 'openai') {
@@ -187,7 +187,7 @@ export function apply(ctx: Context, config: Config): void {
       return (async () => {
         if (target && (await target.isAvailable().catch(() => false))) return target
         if (target) {
-          console.warn(`[voice-reader] engine "${requested}" 不可用，回退 edge-tts`)
+          console.warn(`[tts-flash] engine "${requested}" 不可用，回退 edge-tts`)
         }
         return fallback()
       })()
@@ -233,7 +233,7 @@ export function apply(ctx: Context, config: Config): void {
   // ---- waiting (thinking) phrases: named audio files per model ----
   // While the model chews, the voice bar rotates text phrases AND speaks one
   // at the start of the wait. Audio files live in
-  //   ~/.dsh/voice-reader/cache/thinking/<engine>-<voice>.p<index>.<ext>
+  //   ~/.dsh/tts-flash/cache/thinking/<engine>-<voice>.p<index>.<ext>
   // — the index maps 1:1 to THINK_PHRASES, the prefix carries the model (and
   // voice) so several models can coexist. Files are produced by the 「批量生成
   // 等待语音」 button, or auto-generated on the first conversation that needs
@@ -458,7 +458,7 @@ export function apply(ctx: Context, config: Config): void {
       try {
         done(body)
       } catch (e) {
-        console.error('[voice-reader] route handler failed:', e)
+        console.error('[tts-flash] route handler failed:', e)
         try {
           res.statusCode = 500
           res.setHeader('content-type', 'application/json')
@@ -762,7 +762,7 @@ export function apply(ctx: Context, config: Config): void {
         res.end(
           JSON.stringify({
             ok: true,
-            name: 'dsh-voice-reader',
+            name: 'dsh-tts-flash',
             enabled: settings.enabled,
             engine: active.id,
           }),
@@ -772,7 +772,7 @@ export function apply(ctx: Context, config: Config): void {
   )
 
   // Register a cloud (OpenAI-format) engine from the settings panel. The
-  // declaration lands in ~/.dsh/voice-reader/engines/ and becomes selectable
+  // declaration lands in ~/.dsh/tts-flash/engines/ and becomes selectable
   // immediately (registry rebuild + cache invalidation).
   // Update the style/voice-description of an existing cloud engine without
   // touching its credentials.

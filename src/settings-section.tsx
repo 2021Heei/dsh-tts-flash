@@ -364,7 +364,7 @@ export function VoiceSettingsPanel(props: VoiceSettingsPanelProps): JSX.Element 
             <div style={styles.rowLabel}>语音模型</div>
             <div style={styles.rowHint}>
               自动 = 使用 Edge TTS，否则使用所选引擎。新模型在
-              <code style={styles.code}> ~/.dsh/voice-reader/engines/ </code>
+              <code style={styles.code}> ~/.dsh/tts-flash/engines/ </code>
               放一个 JSON 声明即可自动出现
             </div>
           </div>
@@ -458,7 +458,7 @@ export function VoiceSettingsPanel(props: VoiceSettingsPanelProps): JSX.Element 
               type="button"
               onClick={() => {
                 try {
-                  localStorage.removeItem('dsh-voice-reader.barOffV3')
+                  localStorage.removeItem('dsh-tts-flash.barOffV3')
                 } catch {
                   // ignore
                 }

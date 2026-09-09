@@ -180,11 +180,11 @@ export class SpeakQueue {
           }
         } catch (e) {
           // One failed sentence must not stop the queue; report and continue.
-          console.warn(`[voice-reader] synthesis failed: ${String(e)}`)
+          console.warn(`[tts-flash] synthesis failed: ${String(e)}`)
         }
       }
     } catch (e) {
-      console.warn(`[voice-reader] TTS unavailable: ${String(e)}`)
+      console.warn(`[tts-flash] TTS unavailable: ${String(e)}`)
     } finally {
       q.busy = false
       if (q.pending.length > 0) void this.pump(sessionId, q)

@@ -1,4 +1,4 @@
-# dsh-voice-reader
+# dsh-tts-flash
 
 给 DeepSeek Harness（DSH）桌面端做的 **LLM 回复语音朗读插件**：AI 边流式输出，本地边把句子合成语音播放，随读随停；AI 思考等待期间还有"文字+语音"双通道的趣味短语反馈。
 
@@ -14,7 +14,7 @@
 |---|---|
 | 无损流式朗读 | `llm/stream` 旁路 tap → 中英日分句 → 短句合并 → 串行合成 → SSE 推送；队列带背压上限，长回复自动追赶 |
 | 多引擎 | edge-tts（内置）+ OpenAI 兼容云端 TTS（双协议自适应：`/audio/speech` → `chat/completions`） |
-| 引擎即插即用 | 设置面板二级弹窗添加，或往 `~/.dsh/voice-reader/engines/` 放一个 JSON 声明自动出现 |
+| 引擎即插即用 | 设置面板二级弹窗添加，或往 `~/.dsh/tts-flash/engines/` 放一个 JSON 声明自动出现 |
 | 等待期语音体系 | AI 思考时轮换 5 条内置趣味短语（**文字+语音同步**，host 统一驱动）；语音按「模型-音色」前缀缓存只生成一次；等待语音模型可独立选择（默认 Edge 小艺） |
 | 语音设置面板 | 朗读开关 / 语音模型 / 音量 / 语速 / 字幕流光与字号 / 云端引擎管理（二级弹窗）/ 试听区，全部实时生效 |
 | 朗读悬浮条 | 纯文字胶囊，可拖动、位置记忆（相对聊天输入框锚点，窗口缩放自动适应）、长句单程滚动字幕（滚动时长 = 真实音频时长） |
@@ -24,11 +24,11 @@
 
 ```sh
 npm install && node build.mjs && npm test   # 构建 + 单测
-npm pack                                    # → dsh-voice-reader-0.1.0.tgz
+npm pack                                    # → dsh-tts-flash-0.1.0.tgz
 # 用 DSH 的插件安装流程注册该 tgz（cordis.patch.yml 会把 host 引擎 + 客户端浮条注入 profile）
 ```
 
-日常迭代最快路径：把 `lib/*.js` 覆盖复制到 `~/.dsh/profiles/desktop/node_modules/dsh-voice-reader/lib/` 再重启应用。
+日常迭代最快路径：把 `lib/*.js` 覆盖复制到 `~/.dsh/profiles/desktop/node_modules/dsh-tts-flash/lib/` 再重启应用。
 
 ## 使用
 
@@ -36,7 +36,7 @@ npm pack                                    # → dsh-voice-reader-0.1.0.tgz
 
 - **Edge TTS（默认）**：零配置，音色几十种（晓晓/云希/小艺…），「语音模型」下拉选择即可
 - **添加云端引擎**：设置面板「云端引擎」按钮 → 弹窗填 baseURL、API Key、模型 id（别名可选，默认与模型 id 一致）→ 点「添加」。模型 id 必须与厂商文档完全一致（如 MiMo 全小写）
-- 也可以不经过面板：往 `~/.dsh/voice-reader/engines/` 放一个 JSON 声明：
+- 也可以不经过面板：往 `~/.dsh/tts-flash/engines/` 放一个 JSON 声明：
 
 ```json
 {
@@ -50,13 +50,13 @@ npm pack                                    # → dsh-voice-reader-0.1.0.tgz
 }
 ```
 
-- API Key 保存在本机 `~/.dsh/voice-reader/engines/`（单用户本机场景）；请勿把该目录内容分享给他人
+- API Key 保存在本机 `~/.dsh/tts-flash/engines/`（单用户本机场景）；请勿把该目录内容分享给他人
 
 ### 等待期语音
 
 AI 思考（已开始生成但还没有音频）时，浮条每 2.6~3.5 秒轮换一条短语并**同步朗读**（文字与语音由 host 统一驱动，显示什么就说什么）：
 
-- 语音文件缓存在 `~/.dsh/voice-reader/cache/thinking/<引擎id>-<音色>.p<序号>.mp3`，首次用到自动补齐整池，之后直接回放
+- 语音文件缓存在 `~/.dsh/tts-flash/cache/thinking/<引擎id>-<音色>.p<序号>.mp3`，首次用到自动补齐整池，之后直接回放
 - 「等待期语音模型」可独立选择发声引擎（默认 Edge 小艺 zh-CN-XiaoyiNeural）；「批量生成语音」可预生成；「清理语音文件」删除全部
 - 短语池在 `src/thinking-phrases.ts`（5 条），host/client 共享，改完短语后请重新生成音频文件
 - 第一句正文出现时短语循环立即停止，无缝切换为正文朗读
@@ -107,7 +107,7 @@ interface TtsProvider {
 }
 ```
 
-### HTTP API（均在 `/dsh-voice-reader` 下）
+### HTTP API（均在 `/dsh-tts-flash` 下）
 
 ```
 GET  /config            → 设置快照 + engines[] + voices[]
@@ -126,7 +126,7 @@ GET  /stream            → SSE：audio 帧 + config/status 广播
 
 - 未点开过页面前浏览器可能拦截有声自动播放（DSH 内发过一条消息后即解除）。
 - edge-tts 是微软未公开接口：无 SLA，断网即不可用；语速服务端封顶 +100%。
-- client 的 `BASE` 与 host `basePath` 默认值绑定（`/dsh-voice-reader`），改 host 配置需同步 client。
+- client 的 `BASE` 与 host `basePath` 默认值绑定（`/dsh-tts-flash`），改 host 配置需同步 client。
 - 桌面端 web server 只放行 DSH 渲染进程的请求（外部 curl 一律 forbidden，属正常）。
 
 ## License

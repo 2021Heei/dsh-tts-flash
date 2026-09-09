@@ -3,7 +3,7 @@
  *
  * The store anchors its paths to os.homedir(), so the suite points HOME at a
  * throwaway temp dir before importing the module — nothing touches the real
- * ~/.dsh/voice-reader directory.
+ * ~/.dsh/tts-flash directory.
  */
 
 import { mkdtempSync, rmSync, mkdirSync, writeFileSync, readFileSync } from 'node:fs'

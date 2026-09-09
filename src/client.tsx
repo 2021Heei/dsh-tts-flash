@@ -1,5 +1,5 @@
 /**
- * dsh-voice-reader — client half.
+ * dsh-tts-flash — client half.
  *
  * A small voice bar injected into the `shell.overlay` slot. Text only — no
  * status dot and no buttons (the master switch lives in the voice settings
@@ -64,7 +64,7 @@ export function apply(ctx: any): void {
     ctx.slots.register(
       {
         name: 'shell.overlay',
-        id: 'voice-reader',
+        id: 'tts-flash',
         order: 500,
         inject: (): VoiceBarActions => engine,
       },
@@ -78,7 +78,7 @@ export function apply(ctx: any): void {
     ctx.slots.register(
       {
         name: 'settings.section',
-        id: 'voice-reader-settings',
+        id: 'tts-flash-settings',
         order: 400,
         label: () => '语音设置',
         inject: () => ({ title: '语音朗读' }),
@@ -90,8 +90,8 @@ export function apply(ctx: any): void {
 
 // ---------------------------------------------------------------------------
 
-const BASE = '/dsh-voice-reader'
-const LS_KEY = 'dsh-voice-reader.enabled'
+const BASE = '/dsh-tts-flash'
+const LS_KEY = 'dsh-tts-flash.enabled'
 const MAX_CLIENT_QUEUE = 8 // frames; beyond this, oldest audio is dropped
 
 // Idle-while-generating phrases live in ./thinking-phrases.ts — shared with
@@ -180,13 +180,13 @@ function createAudioEngine(): VoiceBarActions {
     // A frame that fails to decode/play must not wedge the queue: log, drop,
     // advance to the next sentence.
     audio.onerror = () => {
-      console.warn('[voice-reader] audio frame failed — skipping to next')
+      console.warn('[tts-flash] audio frame failed — skipping to next')
       audio.onended = null
       set({ playing: false, caption: null })
       playNext()
     }
     audio.play().catch((e) => {
-      console.warn('[voice-reader] playback blocked:', e)
+      console.warn('[tts-flash] playback blocked:', e)
       audio.onended = null
       audio.onerror = null
       set({ playing: false, caption: null })
@@ -363,9 +363,9 @@ interface BarPos {
 // v3: the bar is positioned RELATIVE TO THE CHAT INPUT BOX (top-center
 // anchor), stored as an offset from that anchor — so the bar auto-adapts when
 // the window resizes or sidebars collapse (same relative spot, any window size).
-const OFFSET_KEY = 'dsh-voice-reader.barOffV3'
+const OFFSET_KEY = 'dsh-tts-flash.barOffV3'
 // User-defined default offset, captured via 「设当前位置为默认」.
-const DEFAULT_OFFSET_KEY = 'dsh-voice-reader.barOffDefaultV3'
+const DEFAULT_OFFSET_KEY = 'dsh-tts-flash.barOffDefaultV3'
 
 interface BarOffset {
   dx: number

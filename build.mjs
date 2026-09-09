@@ -1,4 +1,4 @@
-// dsh-voice-reader build: esbuild-based, mirroring the artifact shape that
+// dsh-tts-flash build: esbuild-based, mirroring the artifact shape that
 // DeepSeek Harness plugins expect (see @haoku123/dsh-voice build.mjs):
 //   - host half  → plain ESM cordis plugin  (lib/index.js)
 //   - client half → CJS module-loader closure artifact (lib/client.js)
@@ -7,7 +7,7 @@
 import { build } from 'esbuild'
 import { mkdirSync } from 'node:fs'
 
-const PKG_ID = 'dsh-voice-reader'
+const PKG_ID = 'dsh-tts-flash'
 
 const PLATFORM_EXTERNALS = [
   'react',
@@ -74,4 +74,4 @@ for (const entry of ['segmenter', 'settings-store']) {
   })
 }
 
-console.log('[dsh-voice-reader] build done: lib/index.js (host) + lib/client.js (browser)')
+console.log('[dsh-tts-flash] build done: lib/index.js (host) + lib/client.js (browser)')

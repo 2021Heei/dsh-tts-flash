@@ -3,7 +3,7 @@
  * protocol (OpenAI, 小米 MiMo 开放平台,硅基流动, etc.).
  *
  * Registered at runtime via the settings panel → POST /engines → an engine
- * declaration file with kind:'openai' in ~/.dsh/voice-reader/engines/.
+ * declaration file with kind:'openai' in ~/.dsh/tts-flash/engines/.
  */
 
 import type { SynthesizeOptions, TtsProvider, VoiceInfo } from '../provider.ts'

@@ -5,7 +5,7 @@
  * works no matter which origin the DSH shell is served from.
  */
 
-export const BASE = '/dsh-voice-reader'
+export const BASE = '/dsh-tts-flash'
 
 export interface EngineInfo {
   id: string
