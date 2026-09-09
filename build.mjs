@@ -25,6 +25,8 @@ const PLATFORM_EXTERNALS = [
 mkdirSync('lib', { recursive: true })
 
 // --- host half: plain ESM cordis plugin; runtime deps stay external ---
+// NOTE: msedge-tts is bundled on purpose (not external) — a self-contained
+// lib means installing the plugin never needs dependency resolution.
 await build({
   entryPoints: ['src/index.ts'],
   outfile: 'lib/index.js',
@@ -36,8 +38,10 @@ await build({
     '@deepseek-ai/schemastery',
     '@deepseek-ai/dsh-host-webserver',
     '@deepseek-ai/dsh-llm',
-    'msedge-tts',
     'node:*',
+    // ws's optional native accelerators — must stay out of the bundle
+    'bufferutil',
+    'utf-8-validate',
   ],
   logLevel: 'info',
 })
