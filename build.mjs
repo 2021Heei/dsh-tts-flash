@@ -43,6 +43,13 @@ await build({
     'bufferutil',
     'utf-8-validate',
   ],
+  // Bundled CJS deps (axios → form-data → util/stream …) use bare require()
+  // of Node builtins; in ESM output esbuild's shim throws "Dynamic require
+  // of X is not supported" unless a real require exists. createRequire
+  // provides it.
+  banner: {
+    js: `import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);`,
+  },
   logLevel: 'info',
 })
 
